@@ -195,4 +195,4 @@ google_api_key = ""
 
 ## License
 
-MIT License
+See [LICENSE](LICENSE) for details. Free to use and distribute, but not for sale or SaaS.
