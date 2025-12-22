@@ -1611,7 +1611,7 @@ func (a *App) saveIncomingMessage(account *models.WhatsAppAccount, contact *mode
 		"last_message_at":      now,
 		"last_message_preview": preview,
 		"is_read":              false,
-		"whatsapp_account":     account.Name,
+		"whats_app_account":    account.Name,
 	})
 
 	a.Log.Info("Saved incoming message", "message_id", message.ID, "contact_id", contact.ID)
