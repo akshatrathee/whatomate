@@ -24,7 +24,8 @@ import {
   Users,
   Workflow,
   Sparkles,
-  Key
+  Key,
+  User
 } from 'lucide-vue-next'
 import { getInitials } from '@/lib/utils'
 
@@ -223,6 +224,16 @@ const handleLogout = async () => {
           <PopoverContent side="top" align="start" class="w-56 p-2">
             <div class="text-sm font-medium px-2 py-1.5 text-muted-foreground">My Account</div>
             <Separator class="my-1" />
+            <RouterLink to="/profile">
+              <Button
+                variant="ghost"
+                class="w-full justify-start px-2 py-1.5 h-auto font-normal"
+                @click="isUserMenuOpen = false"
+              >
+                <User class="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </Button>
+            </RouterLink>
             <Button
               variant="ghost"
               class="w-full justify-start px-2 py-1.5 h-auto font-normal"

@@ -49,6 +49,12 @@ const router = createRouter({
           // All roles can access chat
         },
         {
+          path: 'profile',
+          name: 'profile',
+          component: () => import('@/views/profile/ProfileView.vue')
+          // All roles can access profile
+        },
+        {
           path: 'templates',
           name: 'templates',
           component: () => import('@/views/settings/TemplatesView.vue'),
