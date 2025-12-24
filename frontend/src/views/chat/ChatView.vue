@@ -194,16 +194,18 @@ async function selectContact(id: string) {
   if (contact) {
     contactsStore.setCurrentContact(contact)
     await contactsStore.fetchMessages(id)
-    scrollToBottom()
     // Tell WebSocket server which contact we're viewing
     wsService.setCurrentContact(id)
-    // Load media for messages after messages are fetched
+    // Wait for DOM to render messages before scrolling
     await nextTick()
+    // Load media for messages after messages are fetched
     try {
       loadMediaForMessages()
     } catch (e) {
       console.error('Error loading media:', e)
     }
+    // Scroll after a brief delay to ensure content is rendered (instant on initial load)
+    setTimeout(() => scrollToBottom(true), 50)
   }
 }
 
@@ -349,10 +351,13 @@ async function resumeChatbot() {
   }
 }
 
-function scrollToBottom() {
+function scrollToBottom(instant = false) {
   nextTick(() => {
     if (messagesEndRef.value) {
-      messagesEndRef.value.scrollIntoView({ behavior: 'smooth' })
+      messagesEndRef.value.scrollIntoView({
+        behavior: instant ? 'instant' : 'smooth',
+        block: 'end'
+      })
     }
   })
 }
