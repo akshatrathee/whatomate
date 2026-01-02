@@ -66,6 +66,7 @@ class WebSocketService {
   private reconnectDelay = 1000
   private pingInterval: number | null = null
   private isConnected = false
+  private hasConnectedBefore = false
 
   connect(token: string) {
     if (this.ws?.readyState === WebSocket.OPEN) {
@@ -85,9 +86,17 @@ class WebSocketService {
 
       this.ws.onopen = () => {
         console.log('WebSocket connected')
+        const isReconnection = this.hasConnectedBefore
         this.isConnected = true
+        this.hasConnectedBefore = true
         this.reconnectAttempts = 0
         this.startPing()
+
+        // Force refresh data after reconnection to sync any missed updates
+        if (isReconnection) {
+          console.log('WebSocket reconnected - refreshing data')
+          this.refreshStaleData()
+        }
       }
 
       this.ws.onmessage = (event) => {
@@ -390,6 +399,22 @@ class WebSocketService {
       clearInterval(this.pingInterval)
       this.pingInterval = null
     }
+  }
+
+  private refreshStaleData() {
+    // Refresh contacts list
+    const contactsStore = useContactsStore()
+    contactsStore.fetchContacts()
+
+    // Refresh transfers
+    const transfersStore = useTransfersStore()
+    transfersStore.fetchTransfers()
+
+    // Show subtle notification
+    toast.info('Connection restored', {
+      description: 'Data has been refreshed',
+      duration: 3000
+    })
   }
 
   getIsConnected() {
