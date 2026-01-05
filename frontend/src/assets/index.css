@@ -208,7 +208,7 @@
 }
 
 .dark .chat-bubble-outgoing .chat-bubble-time .status-icon {
-  color: rgba(233, 237, 239, 0.6);
+  color: rgba(233, 237, 239, 0.85);
 }
 
 .dark .chat-bubble-outgoing .chat-bubble-time .status-icon.text-blue-400 {
