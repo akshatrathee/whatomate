@@ -264,7 +264,13 @@ func (a *App) createOutgoingMessage(req OutgoingMessageRequest, opts MessageSend
 
 	case models.MessageTypeTemplate:
 		if req.Template != nil {
-			msg.Content = fmt.Sprintf("[Template: %s]", req.Template.DisplayName)
+			// Store actual rendered content instead of just template name
+			content := replaceTemplateParams(req.Template.BodyContent, req.BodyParams)
+			if content == "" {
+				content = fmt.Sprintf("[Template: %s]", req.Template.DisplayName)
+			}
+			msg.Content = content
+			msg.TemplateName = req.Template.Name
 			msg.Metadata = models.JSONB{
 				"template_name": req.Template.Name,
 				"template_id":   req.Template.ID.String(),
@@ -644,6 +650,25 @@ func ExtractParamNamesFromContent(content string) []string {
 		}
 	}
 	return names
+}
+
+// replaceTemplateParams replaces {{1}}, {{2}}, etc. placeholders with actual values
+func replaceTemplateParams(content string, params []string) string {
+	if content == "" || len(params) == 0 {
+		return content
+	}
+
+	result := content
+	// Extract param names from content to replace both named and positional
+	paramNames := ExtractParamNamesFromContent(content)
+	for i, name := range paramNames {
+		if i < len(params) {
+			// Replace both named ({{name}}) and positional ({{1}}) placeholders
+			result = strings.ReplaceAll(result, fmt.Sprintf("{{%s}}", name), params[i])
+			result = strings.ReplaceAll(result, fmt.Sprintf("{{%d}}", i+1), params[i])
+		}
+	}
+	return result
 }
 
 // ResolveParams resolves both positional and named parameters to ordered values
