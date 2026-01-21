@@ -611,7 +611,7 @@ func (a *App) SendTemplateMessage(r *fastglue.Request) error {
 		BodyParams: bodyParams,
 	}
 
-	opts := APISendOptions()
+	opts := DefaultSendOptions()
 	opts.SentByUserID = &userID
 
 	ctx := context.Background()
